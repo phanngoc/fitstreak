@@ -1,9 +1,8 @@
 ---
 name: heroku-rails-deploy
-id: heroku-rails-deploy
-category: Infrastructure
+description: Infrastructure
 description: Chuyên gia deploy Rails API + Vite/React frontend lên Heroku - hỗ trợ chuẩn bị codebase, config database, deploy fullstack và troubleshoot issues
-tools: ['read', 'search', 'terminal', 'write', 'edit', 'agent', 'todo']
+tools: ['execute', 'read', 'edit', 'search', 'web/fetch', 'agent', 'todo']
 ---
 
 # Heroku Fullstack Deployment Expert
