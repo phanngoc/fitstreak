@@ -3,7 +3,7 @@
 class WorkoutSerializer
   include JSONAPI::Serializer
 
-  attributes :id, :date, :workout_type, :duration, :feeling, :note, :created_at
+  attributes :id, :date, :workout_type, :duration, :feeling, :note, :custom_workout_type, :created_at
 
   attribute :feeling_emoji do |workout|
     workout.feeling_emoji

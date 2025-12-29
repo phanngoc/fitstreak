@@ -87,7 +87,7 @@ module Api
       end
 
       def workout_params
-        params.permit(:date, :workout_type, :duration, :feeling, :note)
+        params.permit(:date, :workout_type, :duration, :feeling, :note, :custom_workout_type)
       end
     end
   end

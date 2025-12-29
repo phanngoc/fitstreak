@@ -28,6 +28,7 @@ interface CheckInModalProps {
 export function CheckInModal({ open, onOpenChange }: CheckInModalProps) {
   const [step, setStep] = useState(1)
   const [workoutType, setWorkoutType] = useState('')
+  const [customWorkoutType, setCustomWorkoutType] = useState('')
   const [duration, setDuration] = useState(0)
   const [feeling, setFeeling] = useState(0)
   const [note, setNote] = useState('')
@@ -43,6 +44,7 @@ export function CheckInModal({ open, onOpenChange }: CheckInModalProps) {
         duration,
         feeling,
         note: note || undefined,
+        custom_workout_type: workoutType === 'other' ? customWorkoutType : undefined,
       }),
     onSuccess: (response) => {
       const workout = response.data.workout
@@ -74,6 +76,7 @@ export function CheckInModal({ open, onOpenChange }: CheckInModalProps) {
   const resetForm = () => {
     setStep(1)
     setWorkoutType('')
+    setCustomWorkoutType('')
     setDuration(0)
     setFeeling(0)
     setNote('')
@@ -90,6 +93,9 @@ export function CheckInModal({ open, onOpenChange }: CheckInModalProps) {
   const canProceed = () => {
     switch (step) {
       case 1:
+        if (workoutType === 'other') {
+          return customWorkoutType.trim() !== ''
+        }
         return workoutType !== ''
       case 2:
         return duration > 0
@@ -117,27 +123,44 @@ export function CheckInModal({ open, onOpenChange }: CheckInModalProps) {
         <div className="py-4">
           {/* Step 1: Workout Type */}
           {step === 1 && (
-            <div className="grid grid-cols-2 gap-3">
-              {WORKOUT_TYPES.map((type) => (
-                <Card
-                  key={type.value}
-                  className={cn(
-                    'cursor-pointer transition-all hover:scale-105',
-                    workoutType === type.value &&
-                      'ring-2 ring-primary bg-primary/5'
-                  )}
-                  onClick={() => setWorkoutType(type.value)}
-                >
-                  <CardContent className="flex flex-col items-center justify-center p-6">
-                    <span className="text-3xl mb-2">
-                      {type.label.split(' ')[0]}
-                    </span>
-                    <span className="text-sm font-medium">
-                      {type.label.split(' ').slice(1).join(' ')}
-                    </span>
-                  </CardContent>
-                </Card>
-              ))}
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-3">
+                {WORKOUT_TYPES.map((type) => (
+                  <Card
+                    key={type.value}
+                    className={cn(
+                      'cursor-pointer transition-all hover:scale-105',
+                      workoutType === type.value &&
+                        'ring-2 ring-primary bg-primary/5'
+                    )}
+                    onClick={() => setWorkoutType(type.value)}
+                  >
+                    <CardContent className="flex flex-col items-center justify-center p-6">
+                      <span className="text-3xl mb-2">
+                        {type.label.split(' ')[0]}
+                      </span>
+                      <span className="text-sm font-medium">
+                        {type.label.split(' ').slice(1).join(' ')}
+                      </span>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+              {/* Custom workout type input when 'other' is selected */}
+              {workoutType === 'other' && (
+                <div className="space-y-2">
+                  <Input
+                    placeholder="Nhập loại bài tập (VD: Bơi lội, Cầu lông...)"
+                    value={customWorkoutType}
+                    onChange={(e) => setCustomWorkoutType(e.target.value)}
+                    maxLength={100}
+                    autoFocus
+                  />
+                  <p className="text-xs text-muted-foreground text-center">
+                    {customWorkoutType.length}/100 ký tự
+                  </p>
+                </div>
+              )}
             </div>
           )}
 

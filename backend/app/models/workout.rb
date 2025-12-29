@@ -21,6 +21,8 @@ class Workout < ApplicationRecord
   validates :duration, presence: true, inclusion: { in: DURATIONS }
   validates :feeling, presence: true, inclusion: { in: FEELINGS.keys }
   validates :note, length: { maximum: 500 }
+  validates :custom_workout_type, presence: true, if: -> { workout_type == 'other' }
+  validates :custom_workout_type, length: { maximum: 100 }
 
   scope :today, -> { where(date: Date.current) }
   scope :this_week, -> { where(date: Date.current.beginning_of_week..Date.current.end_of_week) }
@@ -42,7 +44,7 @@ class Workout < ApplicationRecord
     when "gym" then "🏋️ Gym"
     when "running" then "🏃 Running"
     when "yoga" then "🧘 Yoga"
-    when "other" then "💪 Other"
+    when "other" then custom_workout_type.present? ? "💪 #{custom_workout_type}" : "💪 Other"
     end
   end
 end
