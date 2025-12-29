@@ -48,9 +48,9 @@ export const authApi = {
 export const workoutsApi = {
   list: (params?: { type?: string; month?: string; limit?: number }) =>
     api.get('/workouts', { params }),
-  create: (data: { workout_type: string; duration: number; feeling: number; note?: string; date?: string }) =>
+  create: (data: { workout_type: string; duration: number; feeling: number; note?: string; date?: string; custom_workout_type?: string }) =>
     api.post('/workouts', data),
-  update: (id: number, data: Partial<{ workout_type: string; duration: number; feeling: number; note: string }>) =>
+  update: (id: number, data: Partial<{ workout_type: string; duration: number; feeling: number; note: string; custom_workout_type: string }>) =>
     api.patch(`/workouts/${id}`, data),
   delete: (id: number) => api.delete(`/workouts/${id}`),
 }
