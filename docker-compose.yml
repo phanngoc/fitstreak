@@ -1,0 +1,75 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: fitstreak-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: fitstreak_development
+      MYSQL_USER: fitstreak
+      MYSQL_PASSWORD: fitstreak123
+    ports:
+      - "3309:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - fitstreak-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: fitstreak-backend
+    restart: unless-stopped
+    environment:
+      RAILS_ENV: development
+      DATABASE_URL: mysql2://fitstreak:fitstreak123@mysql:3306/fitstreak_development
+      RAILS_MASTER_KEY: ${RAILS_MASTER_KEY:-}
+      JWT_SECRET: your-super-secret-jwt-key-change-in-production
+    ports:
+      - "3002:3000"
+    volumes:
+      - ./backend:/app
+      - backend_gems:/usr/local/bundle
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - fitstreak-network
+    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -b '0.0.0.0'"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: fitstreak-frontend
+    restart: unless-stopped
+    environment:
+      VITE_API_URL: http://localhost:3002
+    ports:
+      - "3003:3003"
+    volumes:
+      - ./frontend:/app
+      - frontend_node_modules:/app/node_modules
+    depends_on:
+      - backend
+    networks:
+      - fitstreak-network
+    command: pnpm dev --host 0.0.0.0 --port 3003
+
+volumes:
+  mysql_data:
+  backend_gems:
+  frontend_node_modules:
+
+networks:
+  fitstreak-network:
+    driver: bridge

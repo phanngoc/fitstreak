@@ -1,0 +1,42 @@
+# FitStreak
+
+# Dependencies
+node_modules/
+vendor/bundle/
+.bundle/
+
+# Build outputs
+dist/
+tmp/
+log/
+*.log
+
+# Database
+*.sqlite3
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker volumes
+mysql_data/
+
+# Rails
+/public/assets
+/storage/*
+!/storage/.keep
+
+# Coverage
+coverage/
